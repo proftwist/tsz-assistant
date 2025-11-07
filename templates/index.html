@@ -1,38 +1,52 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!DOCTYPE html> <!-- Объявление типа документа HTML5 -->
+<html lang="ru"> <!-- Указание языка документа: русский -->
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Современный чат с LLM</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Метаинформация о документе -->
+    <meta charset="UTF-8"> <!-- Кодировка документа: UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Настройка отображения на мобильных устройствах -->
+    <title>Ассистент главы ТСЖ дома в Ганзейском переулке</title> <!-- Заголовок страницы -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"> <!-- Подключение внешнего файла стилей -->
 </head>
 <body>
+    <!-- Основной контейнер чата -->
     <div class="chat-container">
+        <!-- Заголовок чата -->
         <div class="chat-header">
             Чат с ассистентом ТСЖ дома в Ганзейском переулке
         </div>
+        <!-- Область отображения истории сообщений чата -->
         <div id="chat-box" class="chat-box">
+            <!-- Цикл по истории сообщений из переменной chat_history -->
             {% for entry in chat_history %}
+                <!-- Сообщение пользователя -->
                 <div class="message user"><strong>Вы:</strong> {{ entry.user_message }}</div>
-                <div class="message llm"><strong>ИИ:</strong> {{ entry.llm_reply }}</div>
+                <!-- Ответ ИИ-ассистента -->
+                <div class="message llm"><strong>ТСЖ:</strong> {{ entry.llm_reply }}</div>
             {% endfor %}
         </div>
+        <!-- Индикатор загрузки (отображается во время обработки запроса) -->
         <div id="loading-indicator" class="loading-indicator">
+            <!-- Анимация точек загрузки -->
             <div class="loading-dots">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
+        <!-- Контейнер для формы ввода сообщения -->
         <div class="chat-input-container">
+            <!-- Форма отправки сообщения в чат -->
             <form id="chat-form" autocomplete="off">
+                <!-- Поле ввода текста сообщения -->
                 <input type="text" id="user-input" placeholder="Введите ваш вопрос..." required>
+                <!-- Кнопка отправки сообщения -->
                 <button type="submit">
                     <span>Отправить</span>
                 </button>
             </form>
         </div>
     </div>
+    <!-- Подключение внешнего JavaScript файла -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
