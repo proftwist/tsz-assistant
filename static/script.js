@@ -1,24 +1,150 @@
-document.getElementById('chat-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const input = document.getElementById('user-input');
+document.addEventListener('DOMContentLoaded', function() {
+    const chatForm = document.getElementById('chat-form');
+    const userInput = document.getElementById('user-input');
     const chatBox = document.getElementById('chat-box');
-    const userMessage = input.value.trim();
-    if (!userMessage) return;
+    const loadingIndicator = document.getElementById('loading-indicator');
 
-    // Display user message
-    chatBox.innerHTML += `<div class="message user"><strong>You:</strong> ${userMessage}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
-    input.value = '';
+    // Функция для добавления сообщения в чат с анимацией
+    function addMessageToChat(message, isUser = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message');
+        messageDiv.classList.add(isUser ? 'user' : 'llm');
+        messageDiv.classList.add('fade-in');
+        
+        const sender = isUser ? 'Вы' : 'ИИ';
+        messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        
+        chatBox.appendChild(messageDiv);
+        
+        // Прокрутка к новому сообщению
+        smoothScrollToBottom();
+        
+        return messageDiv;
+    }
 
-    // Send to backend (adjust endpoint as needed)
-    const response = await fetch('/chat', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message: userMessage})
+    // Плавная прокрутка вниз
+    function smoothScrollToBottom() {
+        setTimeout(() => {
+            chatBox.scrollTo({
+                top: chatBox.scrollHeight,
+                behavior: 'smooth'
+            });
+        }, 100);
+    }
+
+    // Показать индикатор загрузки
+    function showLoading() {
+        loadingIndicator.style.display = 'block';
+        smoothScrollToBottom();
+    }
+
+    // Скрыть индикатор загрузки
+    function hideLoading() {
+        loadingIndicator.style.display = 'none';
+    }
+
+    // Анимация при отправке сообщения
+    function animateSendMessage() {
+        const button = chatForm.querySelector('button');
+        button.classList.add('sending');
+        
+        setTimeout(() => {
+            button.classList.remove('sending');
+        }, 300);
+    }
+
+    // Обработчик отправки формы
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const userMessage = userInput.value.trim();
+        
+        if (!userMessage) return;
+        
+        // Добавляем сообщение пользователя
+        addMessageToChat(userMessage, true);
+        
+        // Очищаем поле ввода
+        userInput.value = '';
+        
+        // Анимация отправки
+        animateSendMessage();
+        
+        // Показываем индикатор загрузки
+        showLoading();
+        
+        try {
+            // Отправляем запрос к бэкенду
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({message: userMessage})
+            });
+            
+            const data = await response.json();
+            
+            // Скрываем индикатор загрузки
+            hideLoading();
+            
+            // Добавляем ответ от ИИ с анимацией
+            addMessageToChat(data.reply, false);
+            
+        } catch (error) {
+            // Скрываем индикатор загрузки
+            hideLoading();
+            
+            // Показываем сообщение об ошибке
+            addMessageToChat('Произошла ошибка при получении ответа. Пожалуйста, попробуйте еще раз.', false);
+            console.error('Error:', error);
+        }
     });
-    const data = await response.json();
 
-    // Display LLM response
-    chatBox.innerHTML += `<div class="message llm"><strong>LLM:</strong> ${data.reply}</div>`;
-    chatBox.scrollTop = chatBox.scrollHeight;
+    // Поддержка отправки по Enter
+    userInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    // Инициализация прокрутки к последнему сообщению
+    if (chatBox.children.length > 0) {
+        setTimeout(() => {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 100);
+    }
+
+    // Анимация при наведении на сообщения
+    chatBox.addEventListener('mouseover', function(e) {
+        if (e.target.classList.contains('message')) {
+            e.target.style.transform = 'translateY(-2px)';
+        }
+    });
+
+    chatBox.addEventListener('mouseout', function(e) {
+        if (e.target.classList.contains('message')) {
+            e.target.style.transform = 'translateY(0)';
+        }
+    });
+});
+
+// Дополнительные анимации при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    const messages = document.querySelectorAll('.message');
+    
+    // Анимация для существующих сообщений
+    messages.forEach((message, index) => {
+        // Добавляем небольшую задержку для каждой анимации
+        setTimeout(() => {
+            message.style.opacity = '0';
+            message.style.transform = 'translateY(10px)';
+            message.style.transition = 'all 0.3s ease';
+            
+            setTimeout(() => {
+                message.style.opacity = '1';
+                message.style.transform = 'translateY(0)';
+            }, 50);
+        }, index * 100);
+    });
 });

@@ -1,23 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat with LLM</title>
+    <title>Современный чат с LLM</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="chat-container">
+        <div class="chat-header">
+            Чат с ИИ-ассистентом
+        </div>
         <div id="chat-box" class="chat-box">
             {% for entry in chat_history %}
-                <div class="message user"><strong>You:</strong> {{ entry.user_message }}</div>
-                <div class="message llm"><strong>LLM:</strong> {{ entry.llm_reply }}</div>
+                <div class="message user"><strong>Вы:</strong> {{ entry.user_message }}</div>
+                <div class="message llm"><strong>ИИ:</strong> {{ entry.llm_reply }}</div>
             {% endfor %}
         </div>
-        <form id="chat-form" autocomplete="off">
-            <input type="text" id="user-input" placeholder="Введите ваш вопрос." required>
-            <button type="submit">Send</button>
-        </form>
+        <div id="loading-indicator" class="loading-indicator">
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <form id="chat-form" autocomplete="off">
+                <input type="text" id="user-input" placeholder="Введите ваш вопрос..." required>
+                <button type="submit">
+                    <span>Отправить</span>
+                </button>
+            </form>
+        </div>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
