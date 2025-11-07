@@ -32,6 +32,8 @@
 ├── app.py              # Главное приложение Flask
 ├── models.py           # Модели данных
 ├── requirements.txt    # Зависимости проекта
+├── prompts/            # Промпты для генерации ответов
+│   └── prompt1.txt     # Файл с базой промптов
 ├── static/             # Статические файлы (CSS, JS)
 │   ├── style.css       # Стили интерфейса
 │   └── script.js       # Клиентский JavaScript
@@ -56,15 +58,15 @@
 
 ## Установка и запуск
 
-1. Установите зависимости:
-   ```
-   pip install -r requirements.txt
-   ```
+1. Установите рабочее окружение:
+```bash
+python -m venv venv
+```
 
 2. Запустите приложение:
-   ```
-   python app.py
-   ```
+```bash
+python app.py
+```
 
 3. Откройте в браузере http://localhost:5000
 
