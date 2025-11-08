@@ -89,3 +89,4 @@ python app.py
 - **HTML5/CSS3/JavaScript** - фронтенд технологии
 - **Jinja2** - шаблонизатор
 - **Fetch API** - для асинхронных запросов
+- **ShellScript** – для скриптов. 
