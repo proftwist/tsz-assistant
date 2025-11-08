@@ -100,6 +100,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Добавляем обработчик события для кнопки очистки истории
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', function() {
+            // Показываем запрос на подтверждение
+            if (confirm('Вы уверены, что хотите очистить историю сообщений?')) {
+                // Очищаем историю сообщений в браузере
+                chatBox.innerHTML = '';
+                
+                // Также очищаем историю в localStorage, если она там хранится
+                try {
+                    localStorage.removeItem('chatHistory');
+                } catch (e) {
+                    console.log('Не удалось очистить историю из localStorage:', e);
+                }
+            }
+        });
+    }
+
     // Поддержка отправки по Enter
     userInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
